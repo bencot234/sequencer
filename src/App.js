@@ -1,24 +1,25 @@
 import './App.css';
 import { useState, useEffect } from 'react';
+import data from './data';
+
+const getBest = () => {
+  const best = JSON.parse(localStorage.getItem('best'));
+  if (best) {
+    return best;
+  }
+  return 0;
+}
 
 function App() {
-  const [lights, setLights] = useState([
-    { id: 0, on: false, color: "red" },
-    { id: 1, on: false, color: "blue" },
-    { id: 2, on: false, color: "green" },
-    { id: 3, on: false, color: "yellow" },
-  ]);
+  const [lights, setLights] = useState(data);
   const [sequence, setSequence] = useState([]);
   const [userSequence, setUserSequence] = useState([]);
-  const [numLights, setNumLights] = useState(3);
   const [success, setSuccess] = useState(false);
   const [showGameOver, setShowGameOver] = useState(false);
+  const [gameStarted, setGameStarted] = useState(false);
+  const [best, setBest] = useState(getBest());
 
-  const turnOnLight = (index, speed = 500) => {
-    let delay = 500;
-    if (speed < 500) {
-      delay = 300;
-    }
+  const turnOnLight = (index) => {
     const newLights = [...lights];
     newLights[index].on = true;
     setLights(newLights);
@@ -26,7 +27,7 @@ function App() {
       const newerLights = [...lights];
       newerLights[index].on = false;
       setLights(newerLights)
-    }, delay);
+    }, getDelay());
   }
 
   const getRandomIndex = () => {
@@ -48,12 +49,25 @@ function App() {
   }
 
   const startGame = () => {
+    setLights(data);
     setShowGameOver(false);
-    initialSequence(numLights)
+    setGameStarted(true);
+    setUserSequence([]);
+    setSequence([]);
+    initialSequence(3);
   }
- 
-  const specificSequence = (sequence, index) => {
 
+  const getDelay = () => {
+    let delay = 500;
+    let speed = getSpeed();
+    if (speed === 600) delay = 300;
+    if (speed <= 400) delay = 200;
+    if (speed === 200) delay = 100;
+    if (speed <= 100) delay = 70;
+    return delay;
+  }
+
+  const getSpeed = () => {
     let speed = 1000;
     if (sequence.length > 5) speed = 800;
     if (sequence.length > 7) speed = 600;
@@ -61,12 +75,16 @@ function App() {
     if (sequence.length > 11) speed = 300;
     if (sequence.length > 13) speed = 200;
     if (sequence.length > 15) speed = 100;
-    turnOnLight(sequence[index], speed);
+
+    return speed;
+  }
+ 
+  const specificSequence = (sequence, index) => {
+    turnOnLight(sequence[index]);
     setTimeout(() => {
       specificSequence(sequence, index + 1);
-    }, speed)
+    }, getSpeed())
   }
-
 
   const handleClick = (index) => {
     turnOnLight(index);
@@ -74,17 +92,20 @@ function App() {
   }
 
   const handleSuccess = () => {
-    console.log('yes');
-    // setNumLights(prevNumLights => prevNumLights + 1);
     setSequence(prevSequence => [...prevSequence, getRandomIndex()]);
     setUserSequence([]);
     setSuccess(true);
   }
   const handleFail = () => {
-    console.log('no');
     setSequence([]);
     setUserSequence([]);
     setShowGameOver(true);
+    setGameStarted(false);
+    const score = sequence.length -1;
+    if (score > best && score >= 3) {
+      setBest(score);
+      localStorage.setItem('best', JSON.stringify(score));
+    }
   }
 
   useEffect(() => {
@@ -107,12 +128,12 @@ function App() {
     }
   }, [userSequence, sequence]);
 
-
-
   return (
     <>
-      <p>Sequencer</p>
-      <p className={`${showGameOver ? 'game-over' : 'hide'}`}>Game Over</p>
+      <div className='title-container'>
+        <p className='title'>{showGameOver ? 'Game Over' : 'Sequencer'}</p>
+        <div className='underline'></div>
+      </div>
       <div className='container'>
         {lights.map((light, index) => {
           const {id, on, color} = light;
@@ -122,8 +143,9 @@ function App() {
             onClick={() => handleClick(index)}
           ></div>
         })}
-        <button onClick={() => startGame()}>start</button>
+        <button className='start-btn' onClick={() => startGame()}>{gameStarted ? 'Retry' : 'Start'}</button>
       </div>
+      {best && <div className='best'>best: {best}</div>}
     </>
   );
 }

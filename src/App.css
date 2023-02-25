@@ -1,16 +1,21 @@
 .light {
   height: 100px;
   width: 100px;
-  background-color: #ddd;
-  border: 1px solid #444;
+  background-color: #eee;
+  /* border: 1px solid black; */
   border-radius: 1rem;
-  margin: 0.5rem;
+  margin: 10px;
   cursor: pointer;
 }
 
 .container {
   display: grid;
   grid-template-columns: auto 1fr;
+  margin: 0 auto;
+  width: 240px;
+  text-align: center;
+  margin-top: 2rem;
+  position: relative;
 }
 
 .blue {
@@ -32,4 +37,63 @@
 
 .hide {
   display: none;
+}
+
+.start-btn {
+  position: absolute;
+  top: 80px;
+  left: 80px;
+  padding: 30px 15px;
+  border-radius: 50%;
+  font-size: normal;
+  text-transform: uppercase;
+  font-weight: bold;
+  letter-spacing: 1px;
+  background-color: rgb(225, 146, 0);
+  color: black;
+  padding-top: 30px;
+  padding-bottom: 30px;
+  cursor: pointer;
+  transition: 0.5s;
+  border: 3px solid transparent;
+  width: 80px;
+  height: 80px;
+  padding-left: 13px;
+}
+
+.start-btn:hover {
+  transition: 0.5s;
+  border: 3px solid black;
+  letter-spacing: 0;
+  padding-left: 15px;
+}
+
+body {
+  background-color: rgb(225, 146, 0)
+}
+
+.title-container {
+  text-align: center;
+  font-size: 40px;
+  letter-spacing: 2px;
+}
+
+.underline {
+  background-color: black;
+  width: 100px;
+  height: 4px;
+  border-radius: 2px;
+  margin: 0 auto;
+}
+
+.best {
+  width: 220px;
+  margin: 0 auto;
+  margin-top: 1rem;
+  display: flex;
+  justify-content: end;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: small;
 }
